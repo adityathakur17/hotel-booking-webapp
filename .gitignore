@@ -9,3 +9,4 @@ client/.env
 # Other common ignores
 *.log
 .DS_Store
+Todo.md

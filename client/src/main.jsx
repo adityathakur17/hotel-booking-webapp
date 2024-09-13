@@ -5,6 +5,7 @@ import App from './App.jsx'
 import './index.css'
 import IndexPage from './pages/IndexPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import AccountPage from './pages/AccountPage.jsx'
 import Layout from './Layout.jsx'
 
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from 'react-router-dom'
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
       <Route path='' element={<IndexPage/>} />
       <Route path='login' element={<LoginPage/>}/>
       <Route path='register'element={<RegisterPage/>}/>
+      <Route path='account/:subpage?'element={<AccountPage/>}/>
     </Route>
   )
 )
