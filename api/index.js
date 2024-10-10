@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser")
 const User = require("./models/User.js");
+const imageDownloader = require("image-downloader")
+const path = require('path')
 require("dotenv").config();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -13,6 +15,8 @@ const jwtSecret = "wegrtsefaewfrglaryguqwgfeukay";
 
 app.use(express.json());
 app.use(cookieParser())
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(
   cors({
     credentials: true,
@@ -90,4 +94,20 @@ app.post('/logout', (req,res)=>{
   
 })
 
+app.post('/upload-by-link', async (req, res) => {
+  const { link } = req.body;
+  const newName = 'photo' + Date.now() + '.jpg';
+  const dest = path.join(__dirname, 'uploads', newName); // Use path.join for better cross-platform compatibility
+
+  try {
+    await imageDownloader.image({
+      url: link,
+      dest: dest
+    });
+    res.json({ success: true, filePath: newName }); // Return success response and file path
+  } catch (error) {
+    console.error('Error downloading the image:', error); // Log the error
+    res.status(500).json({ success: false, message: 'Failed to download image' }); // Return error response
+  }
+});
 app.listen(4000);
