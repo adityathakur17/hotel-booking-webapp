@@ -131,7 +131,7 @@ app.post('/upload', photosMiddleware.array('photos',100) , (req,res)=>{
 
 app.post('/places', (req,res)=>{
   const {token} = req.cookies
-  const {title, address, addedPhotos, description,
+  const {title, address, photos:addedPhotos, description,
     perks,checkIn, checkOut, maxGuests
   } = req.body
   jwt.verify(token, jwtSecret, {}, async (err, userData)=>{
@@ -146,4 +146,32 @@ app.post('/places', (req,res)=>{
   })
 
 })
+
+app.get('/places', (req, res) => {
+  const { token } = req.cookies;
+  
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+    
+    const { id } = userData;
+    try {
+      const places = await Place.find({ owner: id });
+      res.json(places);
+    } catch (e) {
+      res.status(500).json({ message: 'Failed to fetch places' });
+    }
+  });
+});
+
+app.get('/places/:id',async (req, res)=>{
+  const {id} = req.params
+  res.json(await Place.findById(id))
+})
+
 app.listen(4000);
